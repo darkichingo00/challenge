@@ -4,7 +4,7 @@ const path = require("path");
 const app = express();
 
 // Sirve los archivos estáticos desde Angular
-app.use(express.static(path.join(__dirname, "/dist/WorkSync")));
+app.use(express.static(path.join(__dirname, "dist/WorkSync")));
 
 // Redirige todas las rutas al index.html
 app.get("/*", function (req, res) {
