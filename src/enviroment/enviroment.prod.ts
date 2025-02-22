@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.tudominio.com',
+  apiUrl: 'https://challenge-production-e455.up.railway.app',
 };
