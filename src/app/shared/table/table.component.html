@@ -1,0 +1,124 @@
+<div class="table-responsive">
+  <table class="table table-hover table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th *ngFor="let column of columns" class="text-center">{{ column }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of paginatedData; let i = index">
+        <td class="text-center">{{ i + 1 }}</td>
+        <td>{{ item.title }}</td>
+        <td>{{ item.description }}</td>
+        <td class="text-center">{{ item.date | date: 'dd/MM/yyyy' }}</td>
+        <td class="text-center">
+          <span
+            class="badge p-2"
+            [ngClass]="{
+              'bg-warning text-dark': item.status === TaskStatus.PENDING,
+              'bg-success text-light': item.status === TaskStatus.COMPLETED,
+              'bg-danger text-light': item.status === TaskStatus.CANCEL
+            }"
+          >
+            {{
+              item.status === TaskStatus.PENDING
+                ? "Pendiente"
+                : item.status === TaskStatus.COMPLETED
+                ? "Realizada"
+                : item.status === TaskStatus.CANCEL
+                ? "Cancelada"
+                : "Desconocido"
+            }}
+          </span>
+        </td>
+        <td class="text-center">
+          <div class="btn-group">
+            <!-- Botón de COMPLETAR (Deshabilitado si está COMPLETED) -->
+            <button
+              class="btn btn-success"
+              (click)="emitAction(TaskAction.COMPLETED, item)"
+              [disabled]="
+                item.status === TaskStatus.COMPLETED ||
+                item.status === TaskStatus.CANCEL
+              "
+              title="Marcar como realizada"
+            >
+              <i class="bi bi-check-circle"></i>
+            </button>
+
+            <!-- Botón de CANCELAR (Deshabilitado si está COMPLETED) -->
+            <button
+              class="btn btn-danger"
+              (click)="emitAction(TaskAction.CANCEL, item)"
+              [disabled]="
+                item.status === TaskStatus.COMPLETED ||
+                item.status === TaskStatus.CANCEL
+              "
+              title="Cancelar tarea"
+            >
+              <i class="bi bi-x-circle"></i>
+            </button>
+
+            <button
+              class="btn btn-warning"
+              (click)="emitAction(TaskAction.PENDING, item)"
+              [disabled]="
+                item.status === TaskStatus.PENDING ||
+                item.status === TaskStatus.CANCEL
+              "
+              title="Cancelar tarea"
+            >
+              <i class="bi bi-question-lg"></i>
+            </button>
+
+            <!-- Botón de EDITAR (Deshabilitado si está COMPLETED) -->
+            <button
+              class="btn btn-primary"
+              [disabled]="
+                item.status === TaskStatus.COMPLETED ||
+                item.status === TaskStatus.CANCEL
+              "
+              (click)="emitAction(TaskAction.EDIT, item)"
+              title="Editar tarea"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+
+            <button
+              class="btn btn-secondary"
+              (click)="emitAction(TaskAction.DELETE, item)"
+              title="Eliminar tarea"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Paginación -->
+<nav *ngIf="totalPages > 1" class="mt-3">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <button class="page-link" (click)="changePage(currentPage - 1)">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </li>
+
+    <li
+      class="page-item"
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      [class.active]="i + 1 === currentPage"
+    >
+      <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+    </li>
+
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <button class="page-link" (click)="changePage(currentPage + 1)">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </li>
+  </ul>
+</nav>

@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+.fade-in-up {
+  animation: bounceIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(-15px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  70% {
+    transform: scale(0.98);
+  }
+  90% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+

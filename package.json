@@ -1,5 +1,5 @@
 {
-  "name": "challenge",
+  "name": "WorkSync",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -18,7 +18,13 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
+    "@popperjs/core": "^2.11.8",
+    "@types/bootstrap": "^5.2.10",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "jwt-decode": "^4.0.0",
     "rxjs": "~7.8.0",
+    "sweetalert2": "^11.17.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

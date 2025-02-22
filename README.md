@@ -1,27 +1,90 @@
-# Challenge
+# Challenge Técnico - Fullstack
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.0.
+Bienvenido al Challenge Técnico - Fullstack. Este proyecto consiste en desarrollar una aplicación de lista de tareas utilizando Angular en el frontend y un backend en Node.js con TypeScript, utilizando Firebase Firestore para la persistencia de datos.
 
-## Development server
+## Tecnologías Utilizadas
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### Frontend:
+- **Angular 17** (con standalone components y Angular Material)
+- **TypeScript**
+- **SCSS** para el manejo de estilos
+- **Angular Routing** para la navegación
+- **Firebase Authentication** para la autenticación de usuarios
 
-## Code scaffolding
+### Backend:
+- **Node.js con TypeScript**
+- **Express**
+- **Firebase Firestore** como base de datos
+- **Cloud Functions** para la implementación del API REST
+- **JWT (JSON Web Token)** para autenticación segura
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Funcionalidades
 
-## Build
+### Frontend:
+1. **Inicio de sesión:** El usuario ingresa su correo y si existe, se redirige a la página principal; si no existe, se le da la opción de crear una cuenta.
+2. **Lista de tareas:** Se pueden agregar, editar, eliminar y marcar tareas como completadas.
+3. **Interfaz responsive:** Adaptada para diferentes dispositivos.
+4. **Validaciones:** Se implementan validaciones en formularios y campos obligatorios.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Backend:
+1. **Autenticación de usuarios con Firebase Authentication**.
+2. **Endpoints para la gestión de tareas:**
+   - `GET /tasks`: Obtener la lista de todas las tareas.
+   - `POST /tasks`: Agregar una nueva tarea.
+   - `PUT /tasks/{taskId}`: Actualizar los datos de una tarea existente.
+   - `DELETE /tasks/{taskId}`: Eliminar una tarea existente.
+   - `GET /users/{email}`: Buscar el usuario por email.
+   - `POST /users`: Crear un nuevo usuario.
 
-## Running unit tests
+## Estructura del Proyecto
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Frontend:
+```
+/src
+  /app
+    /components
+    /services
+    /pages
+    /models
+  /assets
+  /environments
+```
 
-## Running end-to-end tests
+### Backend:
+```
+/src
+  /controllers
+  /routes
+  /services
+  /models
+  /middlewares
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Instalación y Ejecución
 
-## Further help
+### Frontend:
+```sh
+cd frontend
+npm install
+ng serve
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Backend:
+```sh
+cd backend
+npm install
+npm run dev
+```
+
+## Despliegue
+El frontend se ha desplegado en **Firebase Hosting** y el backend en **Cloud Functions** de Firebase.
+
+## Contribución
+Si deseas contribuir a este proyecto, realiza un fork del repositorio, crea una rama con tus cambios y envía un pull request.
+
+## Contacto
+Para consultas o sugerencias, puedes contactarme en GitHub o a través de mis redes sociales.
+
+---
+**Desarrollado por Guillermo Hernández**
+

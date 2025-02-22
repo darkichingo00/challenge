@@ -1,0 +1,26 @@
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.list-group-item {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+.work-stroke {
+  -webkit-text-stroke: 1.7px #007bff;
+  -webkit-text-fill-color: white;
+}
+
+.logo img{
+  width: 200px;
+  height: 200px;
+  display: block;
+  margin: 0 auto;
+}

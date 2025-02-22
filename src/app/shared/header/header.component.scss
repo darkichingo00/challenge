@@ -1,0 +1,17 @@
+.navbar {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-item .nav-link {
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-item .nav-link:hover,
+.navbar-nav .nav-item .nav-link:focus,
+.navbar-nav .nav-item .nav-link:active {
+  color: #ffffff !important;
+}
+
+ul > li > a {
+  font-size: 1.05rem;
+}
