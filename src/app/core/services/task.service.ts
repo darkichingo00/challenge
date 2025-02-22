@@ -1,15 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../../../enviroments/enviroment';
 import { Task, TaskResponse } from '../interface/task.interface';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  private apiUrl = `${environment.apiUrl}/tasks`; // URL base de la API
+  private apiUrl = `${environment.apiUrl}/tasks`;
   private authService = inject(AuthService);
   private http = inject(HttpClient);
 
