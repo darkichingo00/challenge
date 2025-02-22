@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://challenge-production-e455.up.railway.app',
+  apiUrl: 'https://tasksbackend-production-aa43.up.railway.app',
 };
