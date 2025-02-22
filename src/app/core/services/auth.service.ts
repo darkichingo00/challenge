@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
-import { environment } from '../../../enviroment/enviroment';
+import { environment } from '../../../enviroments/enviroment';
 import { AlertService } from './alert.service';
 import { LoginResponse, RegisterResponse, User } from '../interface/person.interface';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
