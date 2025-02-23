@@ -9,6 +9,7 @@ export interface Task {
   title: string;
   description: string;
   date: string;
+  time: string;
   status: TaskStatus;
   userId?: string;
 }

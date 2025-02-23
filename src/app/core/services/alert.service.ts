@@ -13,7 +13,7 @@ export class AlertService {
       text: text,
       icon: 'success',
       confirmButtonText: 'Aceptar',
-      confirmButtonColor: '#0d6efd'
+      confirmButtonColor: '#0d6efd',
     });
   }
 
@@ -23,7 +23,7 @@ export class AlertService {
       text,
       icon: 'error',
       confirmButtonText: 'Aceptar',
-      confirmButtonColor: '#0d6efd'
+      confirmButtonColor: '#0d6efd',
     });
   }
 
@@ -33,7 +33,7 @@ export class AlertService {
       text,
       icon: 'warning',
       confirmButtonText: 'Aceptar',
-      confirmButtonColor: '#0d6efd'
+      confirmButtonColor: '#0d6efd',
     });
   }
 
@@ -41,7 +41,7 @@ export class AlertService {
     title: string,
     text: string,
     confirmButtonText: string,
-    cancelButtonText: string
+    cancelButtonText: string,
   ): Promise<boolean> {
     return Swal.fire({
       title: title,
@@ -50,11 +50,11 @@ export class AlertService {
       showCancelButton: true,
       confirmButtonText,
       cancelButtonText,
-      confirmButtonColor: "#0d6efd"
+      confirmButtonColor: '#0d6efd',
     }).then((result) => result.isConfirmed);
   }
 
-  async generalAlert(title: string, text: string, icon: SweetAlertIcon, confirmButtonText :string){
+  async generalAlert(title: string, text: string, icon: SweetAlertIcon, confirmButtonText: string) {
     const result = await Swal.fire({
       title: title,
       text: text,
@@ -62,7 +62,7 @@ export class AlertService {
       showCancelButton: true,
       confirmButtonText: confirmButtonText,
       confirmButtonColor: '#0d6efd',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
     });
     return result.isConfirmed;
   }
@@ -75,7 +75,7 @@ export class AlertService {
       showCancelButton: true,
       confirmButtonText: 'Sí, completar',
       confirmButtonColor: '#0d6efd',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
     });
     return result.isConfirmed;
   }
@@ -89,7 +89,7 @@ export class AlertService {
       showCancelButton: true,
       confirmButtonText: 'Sí, cancelar',
       cancelButtonText: 'No',
-      confirmButtonColor: '#0d6efd'
+      confirmButtonColor: '#0d6efd',
     });
     return result.isConfirmed;
   }
@@ -104,7 +104,7 @@ export class AlertService {
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#0d6efd',
-    }).then(result => result.isConfirmed);
+    }).then((result) => result.isConfirmed);
   }
 
   async exitLogout(title: string, text: string, confirmButtonText: string, cancelButtonText: string): Promise<boolean> {

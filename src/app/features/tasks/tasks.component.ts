@@ -29,55 +29,79 @@ export class TasksComponent implements OnInit {
   private ngSpinnerService = inject(NgSpinnerService);
   @ViewChild(FormComponent) formComponent!: FormComponent;
 
-  tableColumns = ['No.', 'Título', 'Descripción', 'Creación', 'Estado', 'Acciones'];
+  tableColumns = ['No.', 'Título', 'Descripción', 'Programada', 'Estado', 'Acciones'];
   tasks: Task[] = [];
   searchQuery = '';
   isEditMode = false;
   selectedTask: Task | null = null;
   selectedStatus: string = '';
 
-  // Campos del formulario para crear una nueva tarea
-  taskFields = [
-    {
-      name: 'title',
-      label: 'Título',
-      type: 'text',
-      placeholder: 'Ingrese el título de la tarea',
-      required: true,
-    },
-    {
-      name: 'description',
-      label: 'Descripción',
-      type: 'text',
-      placeholder: 'Ingrese la descripción de la tarea',
-      required: true,
-    },
-    {
-      name: 'date',
-      label: 'Fecha',
-      type: 'date',
-      placeholder: 'Seleccione la fecha',
-      required: true,
-    },
-  ];
+  // Campos del formulario (se actualizan dinámicamente)
+  taskFields = this.getTaskFields(false);
 
   ngOnInit() {
-    this.ngSpinnerService.showSpinner()
+    this.ngSpinnerService.showSpinner();
     this.loadUserTasks();
+  }
+
+  // Obtener los campos del formulario según el modo (creación o edición)
+  getTaskFields(isEditMode: boolean) {
+    return [
+      {
+        name: 'title',
+        label: 'Título',
+        type: 'text',
+        placeholder: 'Ingrese el título de la tarea',
+        required: !isEditMode,
+      },
+      {
+        name: 'description',
+        label: 'Descripción',
+        type: 'text',
+        placeholder: 'Ingrese la descripción de la tarea',
+        required: !isEditMode,
+      },
+      {
+        name: 'date',
+        label: 'Fecha',
+        type: 'date',
+        placeholder: 'Seleccione la fecha',
+        required: !isEditMode,
+      },
+      {
+        name: 'time',
+        label: 'Hora',
+        type: 'time',
+        placeholder: 'Seleccione la hora',
+        required: !isEditMode,
+      },
+    ];
   }
 
   switchToCreateMode() {
     this.isEditMode = false;
     this.selectedTask = null;
+
+    this.taskFields = this.getTaskFields(false);
     this.resetForm();
+  }
+
+  switchToEditMode(task: Task) {
+    this.isEditMode = true;
+    this.selectedTask = task;
+
+
+    this.taskFields = this.getTaskFields(true);
+    this.patchFormValues(task);
   }
 
   // Cargar las tareas del usuario
   loadUserTasks() {
     this.taskService.getUserTasks().subscribe({
       next: (response: TaskResponse) => {
+        console.log(response);
         this.tasks = response.tasks || [];
-        this.ngSpinnerService.hideSpinner()
+        this.ngSpinnerService.hideSpinner();
       },
       error: () => {
         this.alertService.error('Error', 'Hubo un problema al obtener las tareas.');
@@ -95,25 +119,24 @@ export class TasksComponent implements OnInit {
         break;
 
       case 'EDIT':
-        this.selectedTask = item;
-        this.isEditMode = true;
-        this.patchFormValues(item);
+        this.switchToEditMode(item);
         break;
 
       case 'DELETE':
+        this.isEditMode = false;
         this.deleteTask(item.id!);
         break;
 
       case 'COMPLETED':
-        this.updateTaskStatus(item.id!, TaskStatus.COMPLETED, 'Tarea completada.');
+        this.updateTask(item.id!, { status: TaskStatus.COMPLETED }, 'Tarea completada.');
         break;
 
       case 'PENDING':
-        this.updateTaskStatus(item.id!, TaskStatus.PENDING, 'Tarea pendiente.');
+        this.updateTask(item.id!, { status: TaskStatus.PENDING }, 'Tarea pendiente.');
         break;
 
       case 'CANCEL':
-        this.updateTaskStatus(item.id!, TaskStatus.CANCEL, 'Tarea cancelada.');
+        this.updateTask(item.id!, { status: TaskStatus.CANCEL }, 'Tarea cancelada.');
         break;
 
       default:
@@ -130,15 +153,13 @@ export class TasksComponent implements OnInit {
         if (response.message) {
           this.alertService.success('Tarea creada', 'La tarea se ha creado correctamente.');
 
-          // Si la respuesta no tiene un arreglo de tareas, agregamos la tarea manualmente
           if (response.tasks && response.tasks.length > 0) {
-            this.tasks.push(response.tasks[0]); // Agregar la nueva tarea al arreglo
+            this.tasks.push(response.tasks[0]);
           } else {
-            // Si no hay tareas en la respuesta, asumimos que la tarea creada es el objeto `task`
             this.tasks.push(task);
           }
 
-          this.loadUserTasks(); // Recargar las tareas
+          this.loadUserTasks();
         }
         this.ngSpinnerService.hideSpinner();
       },
@@ -151,34 +172,53 @@ export class TasksComponent implements OnInit {
 
   patchFormValues(task: Task) {
     if (this.formComponent && this.formComponent.form) {
+      const dateTime = this.combineDateAndTime(task.date, task.time);
       this.formComponent.form.patchValue({
         title: task.title,
         description: task.description,
-        date: task.date,
-        status: task.status
+        date: dateTime,
+        time: task.time,
+        status: task.status,
       });
     }
   }
 
-  updateTask(task: Task) {
+  combineDateAndTime(date: string, time: string): number {
+    // Crear un objeto Date combinando date y time
+    const dateTimeString = `${date}T${time}:00`; // Formato: YYYY-MM-DDTHH:MM:SS
+    const dateTime = new Date(dateTimeString);
+
+    // Convertir a timestamp (milisegundos desde 1970-01-01)
+    return dateTime.getTime();
+  }
+
+  updateTask(id: string, task: Partial<Task>, message?: string) {
     this.ngSpinnerService.showSpinner();
-    this.taskService.updateTask(task.id!, task).subscribe({
+    const currentTask = this.tasks.find(t => t.id === id);
+
+    if (!currentTask) {
+      this.ngSpinnerService.hideSpinner();
+      this.alertService.error('Error', 'Tarea no encontrada.');
+      return;
+    }
+
+    const updatedTask = { ...currentTask, ...task };
+
+    this.taskService.updateTask(id, updatedTask).subscribe({
       next: (response: TaskResponse) => {
-        this.alertService.success('Tarea actualizada', 'La tarea se ha actualizado correctamente.');
+        if (message) {
+          this.alertService.success('Actualización', message);
+        } else {
+          this.alertService.success('Tarea actualizada', 'La tarea se ha actualizado correctamente.');
+        }
 
-        // Extraer la tarea actualizada de la respuesta
-        const updatedTask = response.tasks?.[0]; // Asume que la respuesta contiene la tarea actualizada
-
-        if (updatedTask) {
-          // Actualizar el arreglo `tasks` con la tarea modificada
-          const index = this.tasks.findIndex(t => t.id === task.id);
-          if (index !== -1) {
-            this.tasks[index] = updatedTask; // Actualiza la tarea en el arreglo
-          }
+        // Actualizar el arreglo `tasks` con la tarea modificada
+        const index = this.tasks.findIndex(t => t.id === id);
+        if (index !== -1) {
+          this.tasks[index] = { ...this.tasks[index], ...updatedTask };
         }
 
         this.loadUserTasks(); // Recargar las tareas desde el servidor
-        this.switchToCreateMode(); // Volver al modo de creación
         this.ngSpinnerService.hideSpinner();
       },
       error: (error) => {
@@ -195,7 +235,8 @@ export class TasksComponent implements OnInit {
       title: formData.title,
       description: formData.description,
       date: formData.date,
-      status: TaskStatus.PENDING, // Estado inicial de la tarea
+      time: formData.time,
+      status: TaskStatus.PENDING,
     };
 
     this.createTask(newTask);
@@ -204,47 +245,40 @@ export class TasksComponent implements OnInit {
 
   onUpdateTask(formData: any) {
     if (this.selectedTask) {
-      const updatedTask: Task = {
-        ...this.selectedTask,
-        title: formData.title,
-        description: formData.description,
-        date: formData.date,
+      // Crear un objeto con todos los campos del formulario
+      const updatedTask: Partial<Task> = {
+        title: formData.title || this.selectedTask.title,
+        description: formData.description || this.selectedTask.description,
+        date: formData.date || this.selectedTask.date,
+        time: formData.time || this.selectedTask.time,
+        status: formData.status || this.selectedTask.status,
       };
-
-      this.updateTask(updatedTask);
+      // Enviar la tarea actualizada al backend
+      this.updateTask(this.selectedTask.id!, updatedTask);
+      this.resetForm();
     }
-  }
-
-  // Editar una tarea existente
-  editTask(task: Task) {
-    // Aquí puedes implementar la lógica para editar la tarea sin usar un modal
-    console.log('Editar tarea:', task);
-  }
-
-  // Actualizar el estado de una tarea
-  updateTaskStatus(id: string, status: TaskStatus, message: string) {
-    this.taskService.updateTask(id, { status }).subscribe({
-      next: () => {
-        this.alertService.success('Actualización', message);
-        this.loadUserTasks(); // Recargar las tareas
-      },
-      error: () => {
-        this.alertService.error('Error', 'No se pudo actualizar la tarea.');
-      },
-    });
   }
 
   // Eliminar una tarea
   deleteTask(id: string) {
-    this.taskService.deleteTask(id).subscribe({
-      next: () => {
-        this.alertService.success('Tarea eliminada', 'La tarea ha sido eliminada con éxito.');
-        this.loadUserTasks(); // Recargar las tareas
-      },
-      error: () => {
-        this.alertService.error('Error', 'No se pudo eliminar la tarea.');
-      },
-    });
+    // Mostrar una alerta de confirmación
+    this.alertService.confirmDelete('¿Eliminar tarea?', 'Esta acción no se puede deshacer.')
+      .then((confirmed) => {
+        if (confirmed) {
+          this.ngSpinnerService.showSpinner();
+          this.taskService.deleteTask(id).subscribe({
+            next: () => {
+              this.ngSpinnerService.hideSpinner();
+              this.alertService.success('Tarea eliminada', 'La tarea ha sido eliminada con éxito.');
+              this.loadUserTasks(); // Recargar las tareas
+            },
+            error: () => {
+              this.ngSpinnerService.hideSpinner();
+              this.alertService.error('Error', 'No se pudo eliminar la tarea.');
+            },
+          });
+        }
+      });
   }
 
   resetForm() {

@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment.prod';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/tasks`;
+  private apiUrl = `${environment.apiUrl}`;
   private userSubject = new BehaviorSubject<User | null>(null);
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   private http = inject(HttpClient);

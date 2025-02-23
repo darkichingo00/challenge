@@ -54,6 +54,8 @@ export class TaskService {
 
   // Actualizar una tarea existente
   updateTask(id: string, task: Partial<Task>): Observable<TaskResponse> {
+    console.log('Payload:', { id, task });
+
     return this.http.put<TaskResponse>(`${this.apiUrl}/${id}`, task, {
       headers: this.getHeaders(),
     });
